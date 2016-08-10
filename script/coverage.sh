@@ -25,4 +25,5 @@ generate_cover_data() {
   grep -h -v "^mode:" "$workdir"/*.cover >>"$profile"
 }
 
+go get -v
 generate_cover_data $(go list ./... | grep -v vendor)
