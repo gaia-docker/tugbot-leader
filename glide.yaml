@@ -1,0 +1,15 @@
+package: github.com/gaia-docker/tugbot-leader
+import:
+- package: github.com/docker/engine-api
+  version: ~0.3.3
+  subpackages:
+  - client
+  - types
+  - types/swarm
+- package: github.com/stretchr/testify
+  version: ~1.1.3
+  subpackages:
+  - mock
+- package: golang.org/x/net
+  subpackages:
+  - context
