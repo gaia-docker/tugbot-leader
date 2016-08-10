@@ -1,6 +1,6 @@
 FROM alpine:3.3
 
-COPY .dist/tugbot /usr/bin/tugbot
+COPY .dist/tugbot-leader /usr/bin/tugbot-leader
 
 LABEL tugbot=leader
 
