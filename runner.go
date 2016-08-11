@@ -10,6 +10,10 @@ import (
 )
 
 func OnServiceUpdate(client client.ServiceAPIClient, updatedServices []string) error {
+	if len(updatedServices) == 0 {
+		return nil
+	}
+
 	services, err := getTestServices(client)
 	if err != nil {
 		return err
