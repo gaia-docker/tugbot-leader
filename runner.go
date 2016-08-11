@@ -14,13 +14,15 @@ func OnServiceUpdate(client client.ServiceAPIClient, updatedServices []string) e
 		return nil
 	}
 
-	services, err := getTestServices(client)
+	testServices, err := getTestServices(client)
 	if err != nil {
 		return err
 	}
 
-	for _, currService := range services {
+	for _, currService := range testServices {
 		log.Print(currService)
+		client.ServiceUpdate(context.Background(), currService.ID,
+			swarm.Version{}, swarm.ServiceSpec{}, types.ServiceUpdateOptions{})
 	}
 
 	return nil

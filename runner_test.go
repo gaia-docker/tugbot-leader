@@ -23,3 +23,18 @@ func TestOnServiceUpdate_EmptyUpdatedServices(t *testing.T) {
 	assert.NoError(t, err)
 	client.AssertExpectations(t)
 }
+
+func TestOnServiceUpdate(t *testing.T) {
+	const testServiceId = "test-service-id"
+	client := mockclient.NewMockClient()
+	testServices := []swarm.Service{{ID: testServiceId}}
+	client.On("ServiceList", mock.Anything, mock.Anything).Return(testServices, nil).Once()
+	client.On("ServiceUpdate",
+		mock.Anything,
+		mock.MatchedBy(func(serviceId string) bool {
+			return testServiceId == serviceId
+		}), mock.Anything, mock.Anything, mock.Anything).Return(nil).Once()
+	err := OnServiceUpdate(client, []string{"updated-service-id"})
+	assert.NoError(t, err)
+	client.AssertExpectations(t)
+}

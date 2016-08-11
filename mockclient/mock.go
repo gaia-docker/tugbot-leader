@@ -33,7 +33,8 @@ func (m *MockClient) ServiceRemove(ctx context.Context, serviceID string) error 
 	return errors.New("Not Implemented")
 }
 func (m *MockClient) ServiceUpdate(ctx context.Context, serviceID string, version swarm.Version, service swarm.ServiceSpec, options types.ServiceUpdateOptions) error {
-	return errors.New("Not Implemented")
+	args := m.Called(ctx, serviceID, version, service, options)
+	return args.Error(0)
 }
 func (m *MockClient) TaskInspectWithRaw(ctx context.Context, taskID string) (swarm.Task, []byte, error) {
 	return swarm.Task{}, nil, errors.New("Not Implemented")
