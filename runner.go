@@ -1,12 +1,12 @@
 package main
 
 import (
+	log "github.com/Sirupsen/logrus"
 	"github.com/docker/engine-api/client"
 	"github.com/docker/engine-api/types"
 	"github.com/docker/engine-api/types/filters"
 	"github.com/docker/engine-api/types/swarm"
 	"golang.org/x/net/context"
-	"log"
 )
 
 func OnServiceUpdate(client client.ServiceAPIClient, updatedServices []string) error {
@@ -20,7 +20,7 @@ func OnServiceUpdate(client client.ServiceAPIClient, updatedServices []string) e
 	}
 
 	for _, currService := range testServices {
-		log.Print(currService)
+		log.Debug("Rerunnig Service: ", currService)
 		client.ServiceUpdate(context.Background(), currService.ID,
 			swarm.Version{}, swarm.ServiceSpec{}, types.ServiceUpdateOptions{})
 	}
