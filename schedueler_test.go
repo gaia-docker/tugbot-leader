@@ -2,24 +2,22 @@ package main
 
 import (
 	"github.com/stretchr/testify/assert"
-	"log"
 	"sync"
 	"testing"
 )
 
-func TestRun(t *testing.T) {
-	sem := sync.WaitGroup{}
-	sem.Add(1)
+func TestSchedulerRun(t *testing.T) {
+	wg := sync.WaitGroup{}
+	wg.Add(1)
 	times := 0
-	scheduler := NewScheduler(func() {
-		defer sem.Done()
+	scheduler := NewScheduler(func() error {
+		defer wg.Done()
 		times++
+
+		return nil
 	})
 	go func() { scheduler.Run() }()
-	log.Print(scheduler)
-	sem.Wait()
-	log.Print(scheduler)
+	wg.Wait()
 	scheduler.Stop()
-	log.Print(scheduler)
 	assert.Equal(t, 1, times)
 }
