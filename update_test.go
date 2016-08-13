@@ -2,12 +2,13 @@ package main
 
 import (
 	"errors"
+	"testing"
+	"time"
+
 	"github.com/docker/engine-api/types/swarm"
 	"github.com/gaia-docker/tugbot-leader/mockclient"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
-	"testing"
-	"time"
 )
 
 func TestUpdateServices_ErrorServiceList(t *testing.T) {
