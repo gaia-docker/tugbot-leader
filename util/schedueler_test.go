@@ -1,9 +1,11 @@
-package main
+package util
 
 import (
-	"github.com/stretchr/testify/assert"
 	"sync"
 	"testing"
+	"time"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestSchedulerRun(t *testing.T) {
@@ -15,9 +17,8 @@ func TestSchedulerRun(t *testing.T) {
 		times++
 
 		return nil
-	})
+	}, time.Minute)
 	go func() { scheduler.Run() }()
 	wg.Wait()
-	scheduler.Stop()
 	assert.Equal(t, 1, times)
 }

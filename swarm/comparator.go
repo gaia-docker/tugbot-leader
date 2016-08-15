@@ -1,4 +1,4 @@
-package main
+package swarm
 
 import (
 	"github.com/docker/engine-api/client"

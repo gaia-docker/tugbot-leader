@@ -1,4 +1,4 @@
-package main
+package swarm
 
 import (
 	log "github.com/Sirupsen/logrus"
@@ -18,11 +18,13 @@ type ServiceUpdater struct {
 	comparator *Comparator
 }
 
-func (s ServiceUpdater) Update() error {
+func (s ServiceUpdater) Run() error {
+	log.Debug("Polling for updated services...")
 	services, err := s.comparator.GetUpdatedServices(s.client)
 	if err != nil {
 		return err
 	}
+	log.Debug("Updated services: ", services)
 
 	return s.onServiceUpdate(services)
 }
@@ -38,9 +40,13 @@ func (s ServiceUpdater) onServiceUpdate(updatedServices []string) error {
 	}
 
 	for _, currService := range testServices {
-		log.Debug("Rerunnig Service: ", currService)
-		s.client.ServiceUpdate(context.Background(), currService.ID,
-			swarm.Version{}, swarm.ServiceSpec{}, types.ServiceUpdateOptions{})
+		log.Info("Rerunnig Service: ", currService)
+		// Sending an empty swarm.ServiceSpec{} result:
+		// Error response from daemon: ContainerSpec: image reference must be provided
+		// Setup ServiceSpec (includes image) using service inspect, result:
+		// Error response from daemon: update out of sequence
+		log.Print("ERROR ", s.client.ServiceUpdate(context.Background(), currService.ID,
+			swarm.Version{}, s.getServiceSpec(currService.ID), types.ServiceUpdateOptions{}))
 	}
 
 	return nil
@@ -51,4 +57,13 @@ func (s ServiceUpdater) getTestServices() ([]swarm.Service, error) {
 	filters.Add("label", "tugbot.docker.events=update")
 
 	return s.client.ServiceList(context.Background(), types.ServiceListOptions{filters})
+}
+
+func (s ServiceUpdater) getServiceSpec(serviceId string) swarm.ServiceSpec {
+	service, _, err := s.client.ServiceInspectWithRaw(context.Background(), serviceId)
+	if err != nil {
+		return swarm.ServiceSpec{}
+	}
+
+	return service.Spec
 }

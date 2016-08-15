@@ -5,14 +5,17 @@ import (
 	"os/signal"
 	"sync"
 	"syscall"
+	"time"
 
 	log "github.com/Sirupsen/logrus"
 	"github.com/docker/engine-api/client"
+	"github.com/gaia-docker/tugbot-leader/swarm"
+	"github.com/gaia-docker/tugbot-leader/util"
 	"github.com/opencontainers/runc/Godeps/_workspace/src/github.com/urfave/cli"
 )
 
 var (
-	scheduler *Scheduler
+	scheduler *util.Scheduler
 	wg        sync.WaitGroup
 )
 
@@ -47,8 +50,8 @@ func before(c *cli.Context) error {
 	if err != nil {
 		panic(err)
 	}
-	controller := NewServiceUpdater(dockerClient)
-	scheduler = NewScheduler(func() error { return controller.Update() })
+	updater := swarm.NewServiceUpdater(dockerClient)
+	scheduler = util.NewScheduler(func() error { return updater.Run() }, time.Minute)
 
 	return nil
 }

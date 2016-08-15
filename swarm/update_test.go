@@ -1,4 +1,4 @@
-package main
+package swarm
 
 import (
 	"errors"
@@ -14,7 +14,7 @@ import (
 func TestUpdateServices_ErrorServiceList(t *testing.T) {
 	client := mockclient.NewMockClient()
 	client.On("ServiceList", mock.Anything, mock.Anything).Return([]swarm.Service{}, errors.New("Expected :)")).Once()
-	err := NewServiceUpdater(client).Update()
+	err := NewServiceUpdater(client).Run()
 	assert.Error(t, err)
 	client.AssertExpectations(t)
 }
@@ -22,7 +22,7 @@ func TestUpdateServices_ErrorServiceList(t *testing.T) {
 func TestUpdateServices_EmptyUpdatedServices(t *testing.T) {
 	client := mockclient.NewMockClient()
 	client.On("ServiceList", mock.Anything, mock.Anything).Return([]swarm.Service{}, nil).Once()
-	err := NewServiceUpdater(client).Update()
+	err := NewServiceUpdater(client).Run()
 	assert.NoError(t, err)
 	client.AssertExpectations(t)
 }
@@ -46,7 +46,7 @@ func TestUpdateServices(t *testing.T) {
 			return testServiceId == serviceId
 		}), mock.Anything, mock.Anything, mock.Anything).Return(nil).Once()
 
-	err := NewServiceUpdater(client).Update()
+	err := NewServiceUpdater(client).Run()
 	assert.NoError(t, err)
 	client.AssertExpectations(t)
 }

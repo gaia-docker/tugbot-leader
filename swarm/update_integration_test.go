@@ -1,4 +1,4 @@
-package main
+package swarm
 
 import (
 	"os"
@@ -14,6 +14,6 @@ func ITestSwarmUpdateServices(t *testing.T) {
 	client, err := client.NewEnvClient()
 	assert.NoError(t, err)
 
-	err = NewServiceUpdater(client).Update()
+	err = NewServiceUpdater(client).Run()
 	assert.NoError(t, err)
 }
