@@ -25,8 +25,10 @@ func (s Scheduler) Run() {
 		}
 		select {
 		case <-s.quit:
+			log.Debug("Schedualer Stopped")
 			return
-		case <-time.After(time.Second * 7):
+		case <-time.After(s.interval):
+			log.Debugf("Finish watting %v", s.interval)
 		}
 	}
 }
