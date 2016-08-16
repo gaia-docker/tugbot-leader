@@ -10,7 +10,10 @@ import (
 )
 
 func NewServiceUpdater(client client.ServiceAPIClient) *ServiceUpdater {
-	return &ServiceUpdater{client: client, comparator: NewComparator()}
+	c := NewComparator()
+	c.Initialize(client)
+
+	return &ServiceUpdater{client: client, comparator: c}
 }
 
 type ServiceUpdater struct {
