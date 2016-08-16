@@ -5,13 +5,12 @@ import (
 	"os/signal"
 	"sync"
 	"syscall"
-	"time"
 
 	log "github.com/Sirupsen/logrus"
 	"github.com/docker/engine-api/client"
 	"github.com/gaia-docker/tugbot-leader/swarm"
 	"github.com/gaia-docker/tugbot-leader/util"
-	"github.com/opencontainers/runc/Godeps/_workspace/src/github.com/urfave/cli"
+	"time"
 )
 
 var (
@@ -24,46 +23,35 @@ func init() {
 }
 
 func main() {
-	app := cli.NewApp()
-	app.Name = "tugbot-leader"
-	app.Usage = "Continuous Testing Framework for Docker Swarm"
-	app.Before = before
-	app.Action = start
-	app.Flags = []cli.Flag{
-		cli.BoolFlag{
-			Name:  "debug",
-			Usage: "enable debug mode with verbose logging",
-		},
-	}
-
-	if err := app.Run(os.Args); err != nil {
-		log.Fatal(err)
-	}
+	start()
+	waitForInterrupt()
 }
 
-func before(c *cli.Context) error {
-	if c.GlobalBool("debug") {
-		log.SetLevel(log.DebugLevel)
-	}
-
+func init() {
+	setLogLevel()
 	dockerClient, err := client.NewEnvClient()
 	if err != nil {
 		panic(err)
 	}
 	updater := swarm.NewServiceUpdater(dockerClient)
-	scheduler = util.NewScheduler(func() error { return updater.Run() }, time.Minute)
+	scheduler = util.NewScheduler(func() error { return updater.Run() }, time.Second*7)
+}
 
-	return nil
+func setLogLevel() {
+	if os.Getenv("TUGBOT_LEADER_LOG_LEVEL") == "debug" {
+		log.SetLevel(log.InfoLevel)
+	} else {
+		log.SetLevel(log.DebugLevel)
+	}
 }
 
 func start() {
-	log.Info("Starting Tugbot Leader...")
+	wg.Add(1)
 	go func() {
-		wg.Add(1)
+		defer wg.Done()
+		log.Info("Starting Tugbot Leader...")
 		scheduler.Run()
-		wg.Done()
 	}()
-	waitForInterrupt()
 }
 
 func waitForInterrupt() {
@@ -71,6 +59,7 @@ func waitForInterrupt() {
 	c := make(chan os.Signal, 1)
 	signal.Notify(c, os.Interrupt, syscall.SIGTERM, syscall.SIGQUIT)
 	<-c
+	log.Info("Stopping Tugbot Leader...")
 	scheduler.Stop()
 	wg.Wait()
 	os.Exit(1)

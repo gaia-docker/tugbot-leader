@@ -8,29 +8,29 @@ import (
 
 type Scheduler struct {
 	task     Task
-	stop     bool
-	timer    *time.Timer
 	interval time.Duration
+	quit     chan int
 }
 
 type Task func() error
 
 func NewScheduler(t Task, interval time.Duration) *Scheduler {
-	return &Scheduler{task: t, stop: false, timer: time.NewTimer(-1), interval: interval}
+	return &Scheduler{task: t, interval: interval, quit: make(chan int)}
 }
 
 func (s Scheduler) Run() {
-	for !s.stop {
+	for {
 		if err := s.task(); err != nil {
 			log.Error(err)
 		}
-		s.timer = time.NewTimer(s.interval)
-		<-s.timer.C
+		select {
+		case <-s.quit:
+			return
+		case <-time.After(time.Second * 7):
+		}
 	}
 }
 
-func (s Scheduler) Stop() bool {
-	s.stop = true
-
-	return s.timer.Stop()
+func (s Scheduler) Stop() {
+	s.quit <- 1
 }
