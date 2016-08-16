@@ -34,15 +34,30 @@ func init() {
 		panic(err)
 	}
 	updater := swarm.NewServiceUpdater(dockerClient)
-	scheduler = util.NewScheduler(func() error { return updater.Run() }, time.Second*7)
+	scheduler = util.NewScheduler(func() error { return updater.Run() }, getInterval())
 }
 
 func setLogLevel() {
-	if os.Getenv("TUGBOT_LEADER_LOG_LEVEL") == "debug" {
+	if os.Getenv(util.TugbotLogLevel) == "debug" {
 		log.SetLevel(log.InfoLevel)
 	} else {
 		log.SetLevel(log.DebugLevel)
 	}
+}
+
+func getInterval() time.Duration {
+	ret := time.Minute
+	interval := os.Getenv(util.TugbotInterval)
+	if interval != "" {
+		duration, err := time.ParseDuration(interval)
+		if err != nil {
+			log.Errorf("Failed to parse %s (%v)", util.TugbotInterval, err)
+		} else {
+			ret = duration
+		}
+	}
+
+	return ret
 }
 
 func start() {
