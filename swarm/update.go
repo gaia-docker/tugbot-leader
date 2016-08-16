@@ -51,7 +51,7 @@ func (s ServiceUpdater) doUpdate(updatedServices []string) error {
 		err = s.client.ServiceUpdate(context.Background(), currService.ID,
 			swarm.Version{}, s.getServiceSpec(currService.ID), types.ServiceUpdateOptions{})
 		if err != nil {
-			log.Debugf("Swarm service update return an error, but ervice probebly will run anyway. ", err)
+			log.Debugf("Swarm service update return an error, but it probebly will update anyway. ", err)
 		}
 	}
 
