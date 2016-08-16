@@ -29,10 +29,10 @@ func (s ServiceUpdater) Run() error {
 	}
 	log.Debug("Updated services: ", services)
 
-	return s.onServiceUpdate(services)
+	return s.doUpdate(services)
 }
 
-func (s ServiceUpdater) onServiceUpdate(updatedServices []string) error {
+func (s ServiceUpdater) doUpdate(updatedServices []string) error {
 	if len(updatedServices) == 0 {
 		return nil
 	}
@@ -51,7 +51,7 @@ func (s ServiceUpdater) onServiceUpdate(updatedServices []string) error {
 		err = s.client.ServiceUpdate(context.Background(), currService.ID,
 			swarm.Version{}, s.getServiceSpec(currService.ID), types.ServiceUpdateOptions{})
 		if err != nil {
-			log.Debugf("Swarm service update return an error. Service probebly will run anyway. ", err)
+			log.Debugf("Swarm service update return an error, but ervice probebly will run anyway. ", err)
 		}
 	}
 

@@ -29,6 +29,10 @@ func main() {
 
 func init() {
 	setLogLevel()
+
+	// Uncomment when debug using docker machine
+	// util.SetEnv()
+
 	dockerClient, err := client.NewEnvClient()
 	if err != nil {
 		panic(err)
