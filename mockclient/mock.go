@@ -27,7 +27,8 @@ func (m *MockClient) ServiceList(ctx context.Context, options types.ServiceListO
 }
 
 func (m *MockClient) ServiceInspectWithRaw(ctx context.Context, serviceID string) (swarm.Service, []byte, error) {
-	return swarm.Service{}, nil, errors.New("Not Implemented")
+	args := m.Called(ctx, serviceID)
+	return args.Get(0).(swarm.Service), args.Get(1).([]byte), args.Error(2)
 }
 func (m *MockClient) ServiceRemove(ctx context.Context, serviceID string) error {
 	return errors.New("Not Implemented")

@@ -40,6 +40,13 @@ func TestUpdateServices(t *testing.T) {
 	client.On("ServiceList", mock.Anything, mock.Anything).Return(testServices, nil).Once()
 
 	// update test services
+	client.On("ServiceInspectWithRaw", mock.Anything,
+		mock.MatchedBy(func(serviceId string) bool {
+			return testServiceId == serviceId
+		})).Return(
+		swarm.Service{Spec: swarm.ServiceSpec{}}, []byte{}, errors.New("Expected :)"))
+
+	// update test services
 	client.On("ServiceUpdate",
 		mock.Anything,
 		mock.MatchedBy(func(serviceId string) bool {
