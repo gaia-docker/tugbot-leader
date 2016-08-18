@@ -9,6 +9,8 @@ import (
 	"golang.org/x/net/context"
 )
 
+const LabelTugbotEvents = "tugbot.event.swarm"
+
 func NewServiceUpdater(client client.ServiceAPIClient) *ServiceUpdater {
 	c := NewComparator()
 	c.Initialize(client)
@@ -22,20 +24,20 @@ type ServiceUpdater struct {
 }
 
 func (s ServiceUpdater) Run() error {
-	log.Debug("Polling for updated services...")
 	services, err := s.comparator.GetUpdatedServices(s.client)
 	if err != nil {
 		return err
 	}
-	log.Debug("Updated services: ", services)
 
 	return s.doUpdate(services)
 }
 
-func (s ServiceUpdater) doUpdate(updatedServices []string) error {
-	if len(updatedServices) == 0 {
+func (s ServiceUpdater) doUpdate(services []string) error {
+	if len(services) == 0 {
+		log.Debugf("No service were update")
 		return nil
 	}
+	log.Debugf("Updated services (%v): %+v", len(services), services)
 
 	testServices, err := s.getTestServices()
 	if err != nil {
@@ -64,7 +66,7 @@ func (s ServiceUpdater) doUpdate(updatedServices []string) error {
 
 func (s ServiceUpdater) getTestServices() ([]swarm.Service, error) {
 	filters := filters.NewArgs()
-	filters.Add("label", "tugbot.docker.events=update")
+	filters.Add("label", LabelTugbotEvents+"=update")
 
 	return s.client.ServiceList(context.Background(), types.ServiceListOptions{filters})
 }
