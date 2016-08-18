@@ -44,14 +44,18 @@ func (s ServiceUpdater) doUpdate(updatedServices []string) error {
 
 	for _, currService := range testServices {
 		log.Info("Rerunnig Service: ", currService)
-		// Sending an empty swarm.ServiceSpec{} result:
-		// Error response from daemon: ContainerSpec: image reference must be provided
-		// Setup ServiceSpec (includes image) using service inspect, result:
-		// Error response from daemon: update out of sequence
-		err = s.client.ServiceUpdate(context.Background(), currService.ID,
-			swarm.Version{}, s.getServiceSpec(currService.ID), types.ServiceUpdateOptions{})
+		version, spec, err := s.getServiceInspect(currService.ID)
 		if err != nil {
-			log.Debugf("Swarm service update return an error, but it probebly will update anyway. ", err)
+			log.Errorf("Failed to get service ID: %s (%v)", currService.ID, err)
+		} else {
+			err = s.client.ServiceUpdate(context.Background(),
+				currService.ID,
+				version,
+				spec,
+				types.ServiceUpdateOptions{})
+			if err != nil {
+				log.Errorf("Failed to update service (Service ID: %s, %v)", currService.ID, err)
+			}
 		}
 	}
 
@@ -65,12 +69,12 @@ func (s ServiceUpdater) getTestServices() ([]swarm.Service, error) {
 	return s.client.ServiceList(context.Background(), types.ServiceListOptions{filters})
 }
 
-func (s ServiceUpdater) getServiceSpec(serviceId string) swarm.ServiceSpec {
+func (s ServiceUpdater) getServiceInspect(serviceId string) (swarm.Version, swarm.ServiceSpec, error) {
 	service, _, err := s.client.ServiceInspectWithRaw(context.Background(), serviceId)
 	if err != nil {
-		log.Errorf("Failed to get service ID: %s (%v)", serviceId, err)
-		return swarm.ServiceSpec{}
+		return swarm.Version{}, swarm.ServiceSpec{}, err
 	}
+	version := service.Meta.Version
 
-	return service.Spec
+	return version, service.Spec
 }
