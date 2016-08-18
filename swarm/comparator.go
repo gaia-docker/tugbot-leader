@@ -38,7 +38,8 @@ func (c Comparator) GetUpdatedServices(client client.ServiceAPIClient) ([]string
 
 	var ret []string
 	for _, currService := range services {
-		if currService.UpdatedAt.After(c.serviceIdToLastUpdate[currService.ID]) {
+		if currService.Spec.Labels[LabelTugbotEvents] == "" &&
+			currService.UpdatedAt.After(c.serviceIdToLastUpdate[currService.ID]) {
 			c.serviceIdToLastUpdate[currService.ID] = currService.UpdatedAt
 			ret = append(ret, currService.ID)
 		}

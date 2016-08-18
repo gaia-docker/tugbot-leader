@@ -48,7 +48,7 @@ func (s ServiceUpdater) doUpdate(services []string) error {
 		log.Info("Rerunnig Service: ", currService)
 		version, spec, err := s.getServiceInspect(currService.ID)
 		if err != nil {
-			log.Errorf("Failed to get service ID: %s (%v)", currService.ID, err)
+			log.Errorf("Failed to get service ID: %s (%+v)", currService.ID, err)
 		} else {
 			err = s.client.ServiceUpdate(context.Background(),
 				currService.ID,
