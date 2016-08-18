@@ -78,5 +78,5 @@ func (s ServiceUpdater) getServiceInspect(serviceId string) (swarm.Version, swar
 	}
 	version := service.Meta.Version
 
-	return version, service.Spec
+	return version, service.Spec, nil
 }
