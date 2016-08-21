@@ -29,6 +29,7 @@ All **Tugbot** labels must be prefixed with `tugbot.` to avoid potential conflic
 docker service create --network my_net --replicas 1 --restart-condition none --label tugbot.swarm.event=update --name mytest my-test-img
 ```
 > It is higly recomanded to determain `--restart-condition none` when creating a test service. Otherwise, Swarm will restart test service all the time.
+
 > Use `--label tugbot.swarm.event=update` to tell tugbot framework that this is a test service that should be updated each time that an application service been updated.
 
 ## Running Tugbot Leader inside a Docker container
