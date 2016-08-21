@@ -7,7 +7,7 @@ import (
 const DockerCertPath string = "DOCKER_CERT_PATH"
 const DockerHost string = "DOCKER_HOST"
 const TugbotInterval string = "TUGBOT_LEADER_INTERVAL"
-const TugbotLogLevel string = "TUGBOT_LEADER_DEBUG"
+const TugbotLogLevel string = "TUGBOT_LEADER_LOG_LEVEL"
 
 func SetEnv() {
 	os.Setenv(DockerCertPath, "/home/effi/.docker/machine/certs/")
