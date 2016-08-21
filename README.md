@@ -30,9 +30,9 @@ docker service create --network my_net --replicas 1 --restart-condition none --l
 ```
 > It is higly recomanded to determain `--restart-condition none` when creating a test service. Otherwise, Swarm will restart test service all the time.
 
-> Use `--label tugbot.swarm.event=update` to tell tugbot framework that this is a test service that should be updated each time that an application service been updated.
+> Use `--label tugbot.swarm.event=update` to tell tugbot framework that this is a test service that should be updated each time that an application service has been updated.
 
 ## Running Tugbot Leader inside a Docker container
 ```bash
-docker run -d -e DOCKER_CERT_PATH=<Docker Certificate Path> -e DOCKER_HOST=<Swarm Master IP:Port> --name tugbot-leader --log-driver=json-file gaiadocker/tugbot-leader
+docker run -d -e DOCKER_HOST=<Swarm Master IP:Port> -e DOCKER_CERT_PATH=<Docker Certificate Path> --log-driver=json-file --name tugbot-leader gaiadocker/tugbot-leader
 ```
