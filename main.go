@@ -18,16 +18,13 @@ var (
 	wg        sync.WaitGroup
 )
 
-func init() {
-	log.SetLevel(log.InfoLevel)
-}
-
 func main() {
+	initialize()
 	start()
 	waitForInterrupt()
 }
 
-func init() {
+func initialize() {
 	setLogLevel()
 
 	// Uncomment when debug using docker machine
@@ -35,8 +32,13 @@ func init() {
 
 	dockerClient, err := client.NewEnvClient()
 	if err != nil {
-		panic(err)
+		log.Fatalf("Failed to create docker client (%+v)", err)
 	}
+
+	if err = swarm.IsValidNode(dockerClient); err != nil {
+		log.Fatal(err)
+	}
+
 	updater := swarm.NewServiceUpdater(dockerClient)
 	scheduler = util.NewScheduler(func() error { return updater.Run() }, getInterval())
 }
