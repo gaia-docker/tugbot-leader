@@ -36,7 +36,7 @@ docker service create --network my_net --replicas 1 --restart-condition none --l
 ```bash
 docker run -d -e DOCKER_HOST=<IP:Port> -e DOCKER_CERT_PATH=<Docker Certificate Path> --log-driver=json-file --name tugbot-leader gaiadocker/tugbot-leader
 ```
-- `DOCKER_HOST` - IP:Port Docker Swarm *Master* host (**Tugbot Leader** should run as part of Docker Swarm *Master* in order to update Docker Swarm Services).
+- `DOCKER_HOST` - IP:Port Docker Swarm **Master** host (**Tugbot Leader** should run as part of Docker Swarm *Master* in order to update Docker Swarm Services).
 - `DOCKER_CERT_PATH` - dirctory should contains: ca.pem, cert.pem and key.pem. While using Docker secure communication.
 - `DOCKER_TLS_VERIFY` - Use TLS when connecting to the Docker socket and verify the server's certificate.
 - `TUGBOT_LEADER_INTERVAL` - Interval time between polling Docker Swarm for list of updated services (currently docker is not exposing Swarm events, this is why Tugbot Leader is polling the Swarm master node). An interval string is a possibly signed sequence of decimal numbers, each with optional fraction and a time unit suffix, such as "300s", "1.5h" or "2h45m". Valid time units are "ns", "us" (or "µs"), "ms", "s", "m", "h".
