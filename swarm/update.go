@@ -9,7 +9,7 @@ import (
 	"golang.org/x/net/context"
 )
 
-const LabelTugbotEvents = "tugbot.event.swarm"
+const LabelTugbotEvents = "tugbot.swarm.events"
 
 func NewServiceUpdater(client client.ServiceAPIClient) *ServiceUpdater {
 	c := NewComparator()
