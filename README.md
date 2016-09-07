@@ -22,7 +22,7 @@ All **Tugbot** labels must be prefixed with `tugbot.` to avoid potential conflic
 
 2) Swarm Service labels:
 
-- `tugbot.event.swarm` - list of comma separated Docker Swarm events (*currently only service update is supported*)
+- `tugbot.swarm.events` - list of comma separated Docker Swarm events (*currently only service update is supported*)
 
 #####Example Docker Swarm Test Service creation:
 ```bash
