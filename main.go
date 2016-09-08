@@ -5,12 +5,12 @@ import (
 	"os/signal"
 	"sync"
 	"syscall"
+	"time"
 
 	log "github.com/Sirupsen/logrus"
 	"github.com/docker/engine-api/client"
 	"github.com/gaia-docker/tugbot-leader/swarm"
 	"github.com/gaia-docker/tugbot-leader/util"
-	"time"
 )
 
 var (
@@ -45,9 +45,9 @@ func initialize() {
 
 func setLogLevel() {
 	if os.Getenv(util.TugbotLogLevel) == "debug" {
-		log.SetLevel(log.InfoLevel)
-	} else {
 		log.SetLevel(log.DebugLevel)
+	} else {
+		log.SetLevel(log.InfoLevel)
 	}
 }
 
