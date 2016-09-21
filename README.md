@@ -9,7 +9,7 @@
 
 ## Test Service
 
-*Test Service* is a regular Docker swarm service. Docker `LABEL` is used to discover *test service* and **Tugbot** related test metadata. These labels can be specified at runtime, using `--label` `docker service create` option.
+*Test Service* is a regular Docker swarm service. Docker `LABEL` is used to discover *test service* and **Tugbot** related test metadata. These labels can be specified at runtime, using `--label` of `docker service create` option.
 **Tugbot Leader** will trigger a sequential *test service* execution upon *event* (see `tugbot.event.swarm` label).
 
 ### Tugbot labels
