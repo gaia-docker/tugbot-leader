@@ -10,7 +10,7 @@
 ## Test Service
 
 *Test Service* is a regular Docker swarm service. Docker `LABEL` is used to discover *test service* and **Tugbot** related test metadata. These labels can be specified at runtime, using `--label` of `docker service create` option.
-**Tugbot Leader** will trigger a sequential *test service* execution upon *event* (see `tugbot.event.swarm` label).
+**Tugbot Leader** will trigger a sequential *test service* execution upon *event* (see `tugbot.swarm.events` label). In order to collect test results and depoly those results to elasticsearch, for example, you should add [tugbot-collect](https://github.com/gaia-docker/tugbot-collect) related labels (see `tugbot.results.dir` label).
 
 ### Tugbot labels
 
@@ -34,9 +34,9 @@ docker service create --network my_net --replicas 1 --restart-condition none --l
 
 ## Running Tugbot Leader inside a Docker container
 ```bash
-docker run -d -e DOCKER_HOST=<IP:Port> -e DOCKER_CERT_PATH=<Docker Certificate Path> --log-driver=json-file --name tugbot-leader gaiadocker/tugbot-leader
+docker run -d -e DOCKER_HOST=<Address> -e DOCKER_CERT_PATH=<Docker Certificate Path> --log-driver=json-file --name tugbot-leader gaiadocker/tugbot-leader
 ```
-- `DOCKER_HOST` - IP:Port Docker Swarm **Master** host (**Tugbot Leader** should run as part of Docker Swarm *Master* in order to update Docker Swarm Services).
+- `DOCKER_HOST` - Docker Swarm **Master** host address (**Tugbot Leader** should run as part of Docker Swarm *Master* in order to update Docker Swarm Services).
 - `DOCKER_CERT_PATH` - dirctory should contain: ca.pem, cert.pem and key.pem. While using Docker secure communication.
 - `DOCKER_TLS_VERIFY` - Use TLS when connecting to the Docker socket and verify the server's certificate.
 - `TUGBOT_LEADER_INTERVAL` - Interval time between polling Docker Swarm for list of updated services (currently docker is not exposing Swarm events, this is why Tugbot Leader is polling the Swarm master node). An interval string is a possibly signed sequence of decimal numbers, each with optional fraction and a time unit suffix, such as "300s", "1.5h" or "2h45m". Valid time units are "ns", "us" (or "µs"), "ms", "s", "m", "h".
