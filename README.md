@@ -10,27 +10,27 @@
 ## Test Service
 
 *Test Service* is a regular Docker swarm service. Docker `LABEL` is used to discover *test service* and **Tugbot** related test metadata. These labels can be specified at runtime, using `--label` of `docker service create` option.
-**Tugbot Leader** will trigger a sequential *test service* execution upon *event* (see `tugbot.swarm.events` label). In order to collect test results and depoly those results to elasticsearch, for example, you should add [tugbot-collect](https://github.com/gaia-docker/tugbot-collect) related labels (see `tugbot.results.dir` label).
+**Tugbot Leader** will trigger a sequential *test service* execution upon *event* (see `tugbot-swarm-events` label). In order to collect test results and depoly those results to elasticsearch, for example, you should add [tugbot-collect](https://github.com/gaia-docker/tugbot-collect) related labels (see `tugbot-results-dir` label).
 
 ### Tugbot labels
 
-All **Tugbot** labels must be prefixed with `tugbot.` to avoid potential conflict with other labels.
+All **Tugbot** labels must be prefixed with `tugbot-` to avoid potential conflict with other labels.
 **Tugbot** labels are divided into:
 
 1) Container labels:
-- `tugbot.results.dir` - directory, where *test container* reports test results; default to `/var/tests/results`
+- `tugbot-results-dir` - directory, where *test container* reports test results; default to `/var/tests/results`
 
 2) Swarm Service labels:
 
-- `tugbot.swarm.events` - list of comma separated Docker Swarm events (*currently only service update is supported*)
+- `tugbot-swarm-events` - list of comma separated Docker Swarm events (*currently only service update is supported*)
 
 #####Example Docker Swarm Test Service creation:
 ```bash
-docker service create --network my_net --replicas 1 --restart-condition none --label tugbot.swarm.events=update --name mytest my-test-img
+docker service create --network my_net --replicas 1 --restart-condition none --label tugbot-swarm-events=update --name mytest my-test-img
 ```
 > It is highly recommended to determain `--restart-condition none` when creating a test service. Otherwise, Swarm will restart test service all the time (default “any”).
 
-> Use `--label tugbot.swarm.events=update` to tell tugbot framework that this is a test service that should be updated each time an application service is updated.
+> Use `--label tugbot-swarm-events=update` to tell tugbot framework that this is a test service that should be updated each time an application service is updated.
 
 ## Running Tugbot Leader inside a Docker container
 ```bash
